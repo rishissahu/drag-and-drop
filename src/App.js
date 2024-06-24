@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import ReactFlow, {
+  Background,
+  addEdge,
+  useEdgesState,
+  useNodesState,
+} from "reactflow";
+import "reactflow/dist/style.css";
+import { AddNodesMenu } from "./components";
+import {
+  initialNodes,
+  initialEdges,
+  nodeTypes,
+  edgeTypes,
+} from "./utils/constants";
+const App = () => {
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-function App() {
+  const onConnect = (connection) => {
+    const edge = {
+      ...connection,
+      animated: true,
+      id: `${edges.length + 1}`,
+      type: "custom-edge",
+    };
+    setEdges((prevEdges) => addEdge(edge, prevEdges));
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="h-screen w-screen font-spaceGrotesk">
+      <AddNodesMenu setNodes={setNodes} />
+      <ReactFlow
+        nodes={nodes}
+        onNodesChange={onNodesChange}
+        edges={edges}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        fitView
+      >
+        <Background />
+      </ReactFlow>
     </div>
   );
-}
+};
 
 export default App;
